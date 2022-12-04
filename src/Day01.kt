@@ -1,5 +1,3 @@
-import java.util.SortedSet
-
 fun main() {
     fun part1(input: List<String>): Int {
         var max = 0
