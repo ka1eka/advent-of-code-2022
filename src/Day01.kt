@@ -1,53 +1,33 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        var max = 0
-        var current = 0
-        var lineIndex = 0
-        while (lineIndex <= input.size) {
-            val currentLine = if (lineIndex == input.size) "" else input[lineIndex]
-            if (currentLine.isEmpty()) {
-                if (current > max) {
-                    max = current
-                }
-                current = 0
+    fun Sequence<Int?>.chunkedOnNull(): Sequence<List<Int>> = sequence {
+        val buffer = mutableListOf<Int>()
+        for (element in this@chunkedOnNull) {
+            if (element == null) {
+                yield(buffer)
+                buffer.clear()
             } else {
-                current += currentLine.toInt()
+                buffer += element
             }
-            lineIndex++
         }
-        return max
+        if (buffer.isNotEmpty()) yield(buffer)
     }
 
-    fun part2(input: List<String>): Int {
-        var top1 = 0
-        var top2 = 0
-        var top3 = 0
-        var current = 0
-        var lineIndex = 0
-        while (lineIndex <= input.size) {
-            val currentLine = if (lineIndex == input.size) "" else input[lineIndex]
-            if (currentLine.isEmpty()) {
-                if (current > top3) {
-                    top3 = current
-                    if (current > top2) {
-                        top3 = top2
-                        top2 = current
-                        if (current > top1) {
-                            top2 = top1
-                            top1 = current
-                        }
-                    }
-                }
-                current = 0
-            } else {
-                current += currentLine.toInt()
-            }
-            lineIndex++
-        }
-        return top1 + top2 + top3
-    }
+    fun part1(input: List<String>): Int = input
+        .asSequence()
+        .map { it.toIntOrNull() }
+        .chunkedOnNull()
+        .map { it.sum() }
+        .max()
 
-    // test if implementation meets criteria from the description, like:
+    fun part2(input: List<String>): Int = input
+        .asSequence()
+        .map { it.toIntOrNull() }
+        .chunkedOnNull()
+        .map { it.sum() }
+        .sortedDescending()
+        .take(3)
+        .sum()
+
     val testInput = readInput("Day01_test")
     check(part1(testInput) == 24000)
     check(part2(testInput) == 45000)

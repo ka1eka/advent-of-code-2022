@@ -6,7 +6,7 @@ fun main() {
         }.map {
             it.chunked(it.size / 2)
         }.map {
-            it[0].intersect(it[1].toSet())
+            it[0] intersect it[1].toSet()
         }.onEach {
             check(it.size == 1)
         }.map {
@@ -25,7 +25,7 @@ fun main() {
             it.toList()
         }.chunked(3)
         .map {
-            it[0].intersect(it[1].intersect(it[2].toSet()))
+            it[0] intersect it[1].toSet() intersect it[2].toSet()
         }.onEach {
             check(it.size == 1)
         }.map {
@@ -38,7 +38,6 @@ fun main() {
             }
         }
 
-    // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day03_test")
     check(part1(testInput) == 157)
     check(part2(testInput) == 70)

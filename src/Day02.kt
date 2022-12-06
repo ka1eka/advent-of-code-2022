@@ -1,65 +1,55 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        var score = 0
-        var lineIndex = 0
-        while (lineIndex < input.size) {
-            val currentLine = input[lineIndex]
-            val round = currentLine.split(' ')
-            val op = round[0][0]
-            val me = round[1][0] - ('X' - 'A')
-            score += me - 'A' + 1
-            if (op == me) {
-                score += 3
-            } else if (op == 'A') {
-                if (me == 'B') {
-                    score += 6
-                }
-            } else if (op == 'B') {
-                if (me == 'C') {
-                    score += 6
-                }
-            } else if (op == 'C') {
-                if (me == 'A') {
-                    score += 6
-                }
-            }
-            lineIndex++
-        }
-        return score
-    }
+    val rules1 = mapOf(
+        Pair('A', 'A') to 3,
+        Pair('A', 'B') to 6,
+        Pair('A', 'C') to 0,
+        Pair('B', 'A') to 0,
+        Pair('B', 'B') to 3,
+        Pair('B', 'C') to 6,
+        Pair('C', 'A') to 6,
+        Pair('C', 'B') to 0,
+        Pair('C', 'C') to 3,
+    )
 
-    fun part2(input: List<String>): Int {
-        var score = 0
-        var lineIndex = 0
-        while (lineIndex < input.size) {
-            val currentLine = input[lineIndex]
-            val round = currentLine.split(' ')
-            val op = round[0][0]
-            val goal = round[1][0]
-            score += when (goal) {
+    val rules2 = rules1
+        .entries
+        .associate {
+            Pair(it.key.first, it.value) to it.key
+        }
+
+    fun calcChoicePoints(me: Char): Int = me - 'A' + 1
+
+    fun calcPart1Score(round: Pair<Char, Char>): Int = rules1[round]!! + calcChoicePoints(round.second)
+
+    fun calcPart2Score(round: Pair<Char, Char>): Int = calcPart1Score(
+        rules2[Pair(
+            round.first,
+            when (round.second) {
                 'Y' -> 3
                 'Z' -> 6
                 else -> 0
             }
-            when (goal) {
-                'Y' -> score += op - 'A' + 1
-                'X' -> when (op) {
-                    'A' -> score += 3
-                    'B' -> score += 1
-                    'C' -> score += 2
-                }
-                'Z' -> when (op) {
-                    'A' -> score += 2
-                    'B' -> score += 3
-                    'C' -> score += 1
-                }
-            }
-            lineIndex++
-        }
-        return score
-    }
+        )]!!
+    )
 
-    // test if implementation meets criteria from the description, like:
+    fun part1(input: List<String>): Int = input
+        .map {
+            it.split(' ')
+        }.map {
+            Pair(it[0][0], it[1][0] - ('X' - 'A'))
+        }.sumOf {
+            calcPart1Score(it)
+        }
+
+    fun part2(input: List<String>): Int = input
+        .map {
+            it.split(' ')
+        }.map {
+            Pair(it[0][0], it[1][0])
+        }.sumOf {
+            calcPart2Score(it)
+        }
+
     val testInput = readInput("Day02_test")
     check(part1(testInput) == 15)
     check(part2(testInput) == 12)
