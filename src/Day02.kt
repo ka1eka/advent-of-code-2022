@@ -41,31 +41,17 @@ fun main() {
                 'Z' -> 6
                 else -> 0
             }
-            if (goal == 'Y') {
-                score += op - 'A' + 1
-            } else if (goal == 'X') {
-                when (op) {
-                    'A' -> {
-                        score += 3
-                    }
-                    'B' -> {
-                        score += 1
-                    }
-                    'C' -> {
-                        score += 2
-                    }
+            when (goal) {
+                'Y' -> score += op - 'A' + 1
+                'X' -> when (op) {
+                    'A' -> score += 3
+                    'B' -> score += 1
+                    'C' -> score += 2
                 }
-            } else if (goal == 'Z') {
-                when (op) {
-                    'A' -> {
-                        score += 2
-                    }
-                    'B' -> {
-                        score += 3
-                    }
-                    'C' -> {
-                        score += 1
-                    }
+                'Z' -> when (op) {
+                    'A' -> score += 2
+                    'B' -> score += 3
+                    'C' -> score += 1
                 }
             }
             lineIndex++
