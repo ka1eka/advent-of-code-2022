@@ -10,37 +10,38 @@ fun main() {
             MutableList(cols) { false }
         }
 
-        fun countVisible(): Int {
-            var count = 0
+        fun toVisibleSequence(): Sequence<Int> = sequence {
             for (y in 0 until rows) {
                 for (x in 0 until cols) {
-                    count += countVisible(lefts, tops, x, y)
-                    count += countVisible(rights, bottoms, cols - x - 1, rows - y - 1)
+                    if(isVisible(lefts, tops, x, y)) {
+                        yield(1)
+                    }
+                    if(isVisible(rights, bottoms, cols - x - 1, rows - y - 1)) {
+                        yield(1)
+                    }
                 }
             }
-
-            return count
         }
 
-        private fun countVisible(vLine: MutableList<Char?>, hLine: MutableList<Char?>, x: Int, y: Int): Int {
-            var count = 0
-
-            val forward = input[y][x]
-            var forwardVisible = false
-            if (isVisibleFrom(vLine, forward, y)) {
-                forwardVisible = true
+        private fun isVisible(vLine: MutableList<Char?>, hLine: MutableList<Char?>, x: Int, y: Int): Boolean {
+            val current = input[y][x]
+            var visible = false
+            if (isVisible(vLine, current, y)) {
+                visible = true
             }
-            if (isVisibleFrom(hLine, forward, x)) {
-                forwardVisible = true
+            if (isVisible(hLine, current, x)) {
+                visible = true
             }
-            if (!visibility[y][x] && forwardVisible) {
+            if (!visibility[y][x] && visible) {
                 visibility[y][x] = true
-                count++
+
+                return true
             }
-            return count
+
+            return false
         }
 
-        private fun isVisibleFrom(line: MutableList<Char?>, current: Char, index: Int): Boolean {
+        private fun isVisible(line: MutableList<Char?>, current: Char, index: Int): Boolean {
             if (line[index] == null || current > line[index]!!) {
                 line[index] = current
 
@@ -59,7 +60,7 @@ fun main() {
         private val tops: List<MutableList<Int?>> = List(rows) { MutableList(cols) { null } }
         private val bottoms: List<MutableList<Int?>> = List(rows) { MutableList(cols) { null } }
 
-        fun countScenicScore(): Sequence<Int> = sequence {
+        fun toScenicScoreSequence(): Sequence<Int> = sequence {
             for (y in 0 until rows) {
                 for (x in 0 until cols) {
                     countVisibleTrees(lefts, tops, x, y, -1, -1)
@@ -105,9 +106,9 @@ fun main() {
         }
     }
 
-    fun part1(input: List<String>): Int = with(Calculator1(input)) { this.countVisible() }
+    fun part1(input: List<String>): Int = with(Calculator1(input)) { this.toVisibleSequence().sum() }
 
-    fun part2(input: List<String>): Int = with(Calculator2(input)) { this.countScenicScore().max() }
+    fun part2(input: List<String>): Int = with(Calculator2(input)) { this.toScenicScoreSequence().max() }
 
     val testInput = readInput("Day08_test")
     check(part1(testInput) == 21)
