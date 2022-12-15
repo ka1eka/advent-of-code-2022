@@ -16,14 +16,22 @@ fun main() {
         }
 
     class Node(val position: Pair<Int, Int>, val target: Pair<Int, Int>) {
-        var parent: Node? = null
         val distance = position.distance(target)
+        private var _cost: Int = 1
+        private var _score: Double = distance + _cost
+
+        var parent: Node? = null
+            set(value) {
+                field = value
+                _cost = 1 + (value?.cost ?: 0)
+                _score = distance + _cost
+            }
 
         val cost: Int
-            get() = 1 + (parent?.cost ?: 0)
+            get() = _cost
 
         val score: Double
-            get() = distance + cost
+            get() = _score
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -45,8 +53,8 @@ fun main() {
         Pair(current.position.first - 1, current.position.second),
         Pair(current.position.first + 1, current.position.second)
     ).filter {
-        input.indices.contains(it.second)
-                && input[it.second].indices.contains(it.first)
+        it.second >= 0 && it.second < input.size
+                && it.first >= 0 && it.first < input[it.second].length
                 && input.height(it) - input.height(current.position) <= 1
     }.map { Node(it, current.target) }
 
